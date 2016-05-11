@@ -14,9 +14,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.androidbuts.jsonparsing.R;
-import com.androidbuts.jsonparsing.adapter.MyArrayAdapter;
+import com.androidbuts.jsonparsing.adapter.MyContactAdapter;
 import com.androidbuts.jsonparsing.model.Contact;
-import com.androidbuts.jsonparsing.model.Contacts;
+import com.androidbuts.jsonparsing.model.ContactList;
 import com.androidbuts.jsonparsing.retrofit.api.ApiService;
 import com.androidbuts.jsonparsing.retrofit.api.RetroClient;
 import com.androidbuts.jsonparsing.utils.InternetConnection;
@@ -26,13 +26,18 @@ import java.util.ArrayList;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
 
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * Views
+     */
     private ListView listView;
+    private View parentView;
+
     private ArrayList<Contact> contactList;
-    private MyArrayAdapter adapter;
+    private MyContactAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
          */
         contactList = new ArrayList<>();
 
+        parentView = findViewById(R.id.parentLayout);
+
         /**
          * Getting List and Setting List Adapter
          */
@@ -54,14 +61,14 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Snackbar.make(findViewById(R.id.parentLayout), contactList.get(position).getName() + " => " + contactList.get(position).getPhone().getHome(), Snackbar.LENGTH_LONG).show();
+                Snackbar.make(parentView, contactList.get(position).getName() + " => " + contactList.get(position).getPhone().getHome(), Snackbar.LENGTH_LONG).show();
             }
         });
 
         /**
          * Just to know onClick and Printing Hello Toast in Center.
          */
-        Toast toast = Toast.makeText(getApplicationContext(), "Click on FloatingActionButton to Load JSON", Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(getApplicationContext(), R.string.string_click_to_load, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
 
@@ -69,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         assert fab != null;
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(@NonNull View view) {
+            public void onClick(@NonNull final View view) {
 
                 /**
                  * Checking Internet Connection
@@ -80,42 +87,52 @@ public class MainActivity extends AppCompatActivity {
                      * Progress Dialog for User Interaction
                      */
                     dialog = new ProgressDialog(MainActivity.this);
-                    dialog.setTitle("Hey Wait Please...");
-                    dialog.setMessage("I am getting your JSON");
+                    dialog.setTitle(getString(R.string.string_getting_json_title));
+                    dialog.setMessage(getString(R.string.string_getting_json_message));
                     dialog.show();
 
-                    /***
-                     * Processing with Retrofit
-                     */
-                    Retrofit retrofit = RetroClient.getDataFromWeb();
-
                     //Creating an object of our api interface
-                    ApiService api = retrofit.create(ApiService.class);
+                    ApiService api = RetroClient.getApiService();
 
-                    Call<Contacts> call = api.getMyJSON();
+                    /**
+                     * Calling JSON
+                     */
+                    Call<ContactList> call = api.getMyJSON();
 
-                    call.enqueue(new Callback<Contacts>() {
+                    /**
+                     * Enqueue Callback will be call when get response...
+                     */
+                    call.enqueue(new Callback<ContactList>() {
                         @Override
-                        public void onResponse(Call<Contacts> call, Response<Contacts> response) {
-
-                            contactList = response.body().getContacts();
-
-                            /**
-                             * Binding that List to Adapter
-                             */
-                            adapter = new MyArrayAdapter(MainActivity.this, contactList);
-                            listView.setAdapter(adapter);
+                        public void onResponse(Call<ContactList> call, Response<ContactList> response) {
+                            //Dismiss Dialog
                             dialog.dismiss();
+
+                            if(response.isSuccessful()) {
+                                /**
+                                 * Got Successfully
+                                 */
+                                contactList = response.body().getContacts();
+
+                                /**
+                                 * Binding that List to Adapter
+                                 */
+                                adapter = new MyContactAdapter(MainActivity.this, contactList);
+                                listView.setAdapter(adapter);
+
+                            } else {
+                                Snackbar.make(parentView, R.string.string_some_thing_wrong, Snackbar.LENGTH_LONG).show();
+                            }
                         }
 
                         @Override
-                        public void onFailure(Call<Contacts> call, Throwable t) {
+                        public void onFailure(Call<ContactList> call, Throwable t) {
                             dialog.dismiss();
                         }
                     });
 
                 } else {
-                    Snackbar.make(view, "Internet Connection Not Available", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(parentView, R.string.string_internet_connection_not_available, Snackbar.LENGTH_LONG).show();
                 }
             }
         });

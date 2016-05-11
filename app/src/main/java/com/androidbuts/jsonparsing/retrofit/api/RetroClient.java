@@ -14,19 +14,22 @@ public class RetroClient {
      *******/
     private static final String ROOT_URL = "http://pratikbutani.x10.mx";
 
-    public RetroClient() {
-
-    }
-
     /**
-     * Get Table Booking Charge
-     *
-     * @return JSON Object
+     * Get Retrofit Instance
      */
-    public static Retrofit getDataFromWeb() {
+    private static Retrofit getRetrofitInstance() {
         return new Retrofit.Builder()
                 .baseUrl(ROOT_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+    }
+
+    /**
+     * Get API Service
+     *
+     * @return API Service
+     */
+    public static ApiService getApiService() {
+        return getRetrofitInstance().create(ApiService.class);
     }
 }

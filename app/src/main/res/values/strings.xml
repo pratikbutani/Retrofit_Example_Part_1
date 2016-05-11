@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name"><u>JSON Parsing Demo</u></string>
     <string name="action_settings">Settings</string>
+    <string name="string_internet_connection_not_available">Internet Connection Not Available</string>
+    <string name="string_some_thing_wrong">Something went wrong.</string>
+    <string name="string_getting_json_message">I am getting your JSON</string>
+    <string name="string_getting_json_title">Hey Wait Please...</string>
+    <string name="string_click_to_load">Click on FloatingActionButton to Load JSON</string>
 </resources>

@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class Contacts {
+public class ContactList {
 
     @SerializedName("contacts")
     @Expose
@@ -24,5 +24,4 @@ public class Contacts {
     public void setContacts(ArrayList<Contact> contacts) {
         this.contacts = contacts;
     }
-
 }

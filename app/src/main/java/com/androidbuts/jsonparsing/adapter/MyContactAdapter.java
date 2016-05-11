@@ -15,23 +15,23 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class MyArrayAdapter extends ArrayAdapter<Contact> {
+public class MyContactAdapter extends ArrayAdapter<Contact> {
 
-    List<Contact> modelList;
+    List<Contact> contactList;
     Context context;
     private LayoutInflater mInflater;
 
     // Constructors
-    public MyArrayAdapter(Context context, List<Contact> objects) {
+    public MyContactAdapter(Context context, List<Contact> objects) {
         super(context, 0, objects);
         this.context = context;
         this.mInflater = LayoutInflater.from(context);
-        modelList = objects;
+        contactList = objects;
     }
 
     @Override
     public Contact getItem(int position) {
-        return modelList.get(position);
+        return contactList.get(position);
     }
 
     @Override
@@ -54,12 +54,6 @@ public class MyArrayAdapter extends ArrayAdapter<Contact> {
         return vh.rootView;
     }
 
-    /**
-     * ViewHolder class for layout.<br />
-     * <br />
-     * Auto-created on 2016-01-05 00:50:26 by Android Layout Finder
-     * (http://www.buzzingandroid.com/tools/android-layout-finder)
-     */
     private static class ViewHolder {
         public final RelativeLayout rootView;
         public final ImageView imageView;
