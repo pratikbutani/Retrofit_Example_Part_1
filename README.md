@@ -1,3 +1,3 @@
-# JSONParsingUsingOkHTTP
-Demo for JSON Parsing using okHttp Library
+# JSON Parsing using Retrofit
+Demo for JSON Parsing using Retrofit Library
 
